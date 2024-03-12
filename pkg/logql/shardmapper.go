@@ -410,13 +410,18 @@ func (m ShardMapper) mapRangeAggregationExpr(expr *syntax.RangeAggregationExpr, 
 			return m.mapSampleExpr(expr, r)
 		}
 
+		grouping := expr.Grouping
+		if grouping == nil {
+			grouping = &syntax.Grouping{Without: true}
+		}
+
 		// avg_over_time() by (foo) -> sum by (foo) (sum_over_time()) / sum by (foo) (count_over_time())
 		lhs, lhsBytesPerShard, err := m.mapVectorAggregationExpr(&syntax.VectorAggregationExpr{
 			Left: &syntax.RangeAggregationExpr{
 				Left:      expr.Left,
 				Operation: syntax.OpRangeTypeSum,
 			},
-			Grouping:  expr.Grouping,
+			Grouping:  grouping,
 			Operation: syntax.OpTypeSum,
 		}, r)
 		if err != nil {
@@ -434,7 +439,7 @@ func (m ShardMapper) mapRangeAggregationExpr(expr *syntax.RangeAggregationExpr, 
 				Left:      countOverTimeSelector,
 				Operation: syntax.OpRangeTypeCount,
 			},
-			Grouping:  expr.Grouping,
+			Grouping:  grouping,
 			Operation: syntax.OpTypeSum,
 		}, r)
 		if err != nil {
