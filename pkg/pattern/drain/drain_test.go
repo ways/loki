@@ -21,7 +21,7 @@ func TestDrain_TrainExtractsPatterns(t *testing.T) {
 		{
 			// High variation leads to many patterns including some that are too generic (many tokens matched) and some that are too specific (too few matchers)
 			name:      `Generate patterns on high variation logfmt logs`,
-			drain:     New(DefaultConfig()),
+			drain:     New(DefaultConfig(), nil),
 			inputFile: `testdata/agent-logfmt.txt`,
 			patterns: []string{
 				`ts=2024-04-16T15:10:43.192290389Z caller=filetargetmanager.go:361 level=info component=logs logs_config=default msg="Adding target" key="/var/log/pods/*19a1cce8-5f04-46e0-a124-292b0dd9b343/testcoordinator/*.log:{batch_kubernetes_io_controller_uid=\"25ec5edf-f78e-468b-b6f3-3b9685f0cc8f\", batch_kubernetes_io_job_name=\"testcoordinator-job-2665838\", container=\"testcoordinator\", controller_uid=\"25ec5edf-f78e-468b-b6f3-3b9685f0cc8f\", job=\"k6-cloud/testcoordinator\", job_name=\"testcoordinator-job-2665838\", name=\"testcoordinator\", namespace=\"k6-cloud\", pod=\"testcoordinator-job-2665838-9g8ds\"}"`,
@@ -44,7 +44,7 @@ func TestDrain_TrainExtractsPatterns(t *testing.T) {
 		{
 			// Lower variation leads to fewer patterns including some with limited value (single lines, no matchers)
 			name:      `Generate patterns on low variation logfmt logs`,
-			drain:     New(DefaultConfig()),
+			drain:     New(DefaultConfig(), nil),
 			inputFile: `testdata/ingester-logfmt.txt`,
 			patterns: []string{
 				`<_> caller=head.go:216 level=debug tenant=987678 msg="profile is empty after delta computation" metricName=memory`,
@@ -55,7 +55,7 @@ func TestDrain_TrainExtractsPatterns(t *testing.T) {
 		{
 			// Lower variation logs in json leads to a high number of patterns with very few matchers
 			name:      `Generate patterns on json formatted logs`,
-			drain:     New(DefaultConfig()),
+			drain:     New(DefaultConfig(), nil),
 			inputFile: `testdata/drone-json.txt`,
 			patterns: []string{
 				`<_> capacity <_>`,
@@ -129,7 +129,7 @@ func TestDrain_TrainGeneratesMatchablePatterns(t *testing.T) {
 	}{
 		{
 			name:  "should match each line against a pattern",
-			drain: New(DefaultConfig()),
+			drain: New(DefaultConfig(), nil),
 			inputLines: []string{
 				`test test test`,
 				`test test test`,
@@ -139,7 +139,7 @@ func TestDrain_TrainGeneratesMatchablePatterns(t *testing.T) {
 		},
 		{
 			name:  "should also match newlines",
-			drain: New(DefaultConfig()),
+			drain: New(DefaultConfig(), nil),
 			inputLines: []string{
 				"test test test\n",
 				"test test test\n",
@@ -174,7 +174,7 @@ func TestDrain_TrainGeneratesPatternsMatchableByLokiPatternFilter(t *testing.T) 
 	}{
 		{
 			name:  "should extract patterns that all lines match",
-			drain: New(DefaultConfig()),
+			drain: New(DefaultConfig(), nil),
 			inputLines: []string{
 				`test 1 test`,
 				`test 2 test`,
@@ -184,7 +184,7 @@ func TestDrain_TrainGeneratesPatternsMatchableByLokiPatternFilter(t *testing.T) 
 		},
 		{
 			name:  "should extract patterns that match if line ends with newlines",
-			drain: New(DefaultConfig()),
+			drain: New(DefaultConfig(), nil),
 			inputLines: []string{
 				"test 1 test\n",
 				"test 2 test\n",
@@ -194,7 +194,7 @@ func TestDrain_TrainGeneratesPatternsMatchableByLokiPatternFilter(t *testing.T) 
 		},
 		{
 			name:  "should extract patterns that match if line ends with empty space",
-			drain: New(DefaultConfig()),
+			drain: New(DefaultConfig(), nil),
 			inputLines: []string{
 				"test 1 test			",
 				"test 2 test			",
@@ -204,7 +204,7 @@ func TestDrain_TrainGeneratesPatternsMatchableByLokiPatternFilter(t *testing.T) 
 		},
 		{
 			name:  "should extract patterns that match if line starts with empty space",
-			drain: New(DefaultConfig()),
+			drain: New(DefaultConfig(), nil),
 			inputLines: []string{
 				"			test 1 test",
 				"			test 2 test",
